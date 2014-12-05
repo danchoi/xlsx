@@ -6,7 +6,6 @@ module Codec.Xlsx.Writer
 
 import qualified Codec.Archive.Zip as Zip
 import           Control.Arrow (second)
-import           Control.Lens hiding (transform)
 import qualified Data.ByteString.Lazy as L
 import           Data.ByteString.Lazy.Char8()
 import           Data.Map (Map)
@@ -42,11 +41,11 @@ fromXlsx ct xlsx =
       [ FileData "docProps/core.xml"
         "application/vnd.openxmlformats-package.core-properties+xml" $ coreXml (toUTCTime ct) "xlsxwriter"
       , FileData "docProps/app.xml"
-        "application/vnd.openxmlformats-officedocument.extended-properties+xml" $ appXml (xlsx ^. xlSheets)
+        "application/vnd.openxmlformats-officedocument.extended-properties+xml" $ appXml (_xlSheets xlsx)
       , FileData "xl/workbook.xml"
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml" $ bookXml (xlsx ^. xlSheets)
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml" $ bookXml (_xlSheets xlsx)
       , FileData "xl/styles.xml"
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml" $ unStyles (xlsx ^. xlStyles)
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml" $ unStyles (_xlStyles xlsx)
       , FileData "xl/sharedStrings.xml"
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml" $ ssXml $ V.toList shared
       , FileData "xl/_rels/workbook.xml.rels"
@@ -56,9 +55,10 @@ fromXlsx ct xlsx =
     sheetFiles =
       [ FileData ("xl/worksheets/sheet" <> txti n <> ".xml")
         "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml" $
-        sheetXml (w ^. wsColumns) (w ^. wsRowPropertiesMap) cells (w ^. wsMerges) |
+        sheetXml (_wsColumns w) (_wsRowPropertiesMap w) cells (_wsMerges w) |
         (n, cells, w) <- zip3 [1..] sheetCells sheets]
-    sheets = xlsx ^. xlSheets . to M.elems
+    sheets :: [Worksheet]
+    sheets = M.elems (_xlSheets xlsx) 
     sheetCount = length sheets
     shared = V.fromList $ S.elems $ S.fromList $ concatMap (concatMap celltext . M.elems . _wsCells) sheets
     sheetCells = map (transformSheetData shared) sheets
@@ -134,7 +134,7 @@ value XlsxCell{xlsxCellValue=Just(XlsxBool False)} = "0"
 value _ = error "value undefined"
 
 transformSheetData :: Vector Text -> Worksheet -> [(Int, [(Int, XlsxCell)])]
-transformSheetData shared ws = map transformRow $ toRows (ws ^. wsCells)
+transformSheetData shared ws = map transformRow $ toRows (_wsCells ws)
   where
     transformRow = second (map transformCell)
     transformCell (c, Cell{_cellValue=v, _cellStyle=s}) =

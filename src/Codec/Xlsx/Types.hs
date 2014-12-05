@@ -2,15 +2,15 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
 module Codec.Xlsx.Types
-    ( Xlsx(..), xlSheets, xlStyles
+    ( Xlsx(..)
     , def
     , Styles(..)
     , emptyStyles
     , ColumnsWidth(..)
-    , Worksheet(..), wsColumns, wsRowPropertiesMap, wsCells, wsMerges
+    , Worksheet(..)
     , CellMap
     , CellValue(..)
-    , Cell(..), cellValue, cellStyle
+    , Cell(..)
     , RowProperties (..)
     , int2col
     , col2int
@@ -18,7 +18,6 @@ module Codec.Xlsx.Types
     , fromRows
     ) where
 
-import           Control.Lens.TH
 import qualified Data.ByteString.Lazy as L
 import           Data.Char
 import           Data.Default
@@ -47,7 +46,6 @@ data Cell = Cell
     , _cellValue  :: Maybe CellValue
     } deriving (Eq, Show)
 
-makeLenses ''Cell
 
 instance Default Cell where
     def = Cell Nothing Nothing
@@ -73,7 +71,6 @@ data Worksheet = Worksheet
     , _wsMerges           :: [Text]
     } deriving (Eq, Show)
 
-makeLenses ''Worksheet
 
 instance Default Worksheet where
     def = Worksheet [] M.empty M.empty []
@@ -87,7 +84,6 @@ data Xlsx = Xlsx
     , _xlStyles :: Styles
     } deriving (Eq, Show)
 
-makeLenses ''Xlsx
 
 instance Default Xlsx where
     def = Xlsx M.empty emptyStyles
