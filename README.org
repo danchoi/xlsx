@@ -6,5 +6,5 @@ Hackage: https://hackage.haskell.org/package/xlsx
 ** Note about fork
 This fork removes the dependency on the lens package to make it less brittle to build.
 
-
+https://github.com/qrilka/xlsx/issues/18
 
