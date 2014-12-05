@@ -1,6 +1,6 @@
 Name:                xlsx
 
-Version:             0.1.0.3
+Version:             0.1.0.4
 
 Synopsis:            Simple and incomplete Excel file parser/writer
 Description:
@@ -50,7 +50,7 @@ Library
                      , time         >= 1.4.0.1
                      , old-time     >= 1.1.0.1
                      , old-locale   >= 1.0.0.5
-                     , data-default == 0.5.*
+                     , data-default >= 0.5.0.0
                      , vector       >= 0.10
                      , binary-search
   Default-Language:     Haskell2010

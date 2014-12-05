@@ -1,2 +1,7 @@
 * About
 Simple xlsx parser/writer, only basic functionality at the moment
+
+## Note about fork
+
+This fork removes the dependency on the lens package to make it less brittle to build.
+
